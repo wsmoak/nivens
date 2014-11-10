@@ -45,7 +45,7 @@ litters = db["litters"]
 litters.remove 
   
 litters.insert(
-  {:litter_id => "43", :doe => "3BL", :buck => "C16", :birth_date => to_utc(2014,10,24),
+  {:id => "43", :doe => "3BL", :buck => "C16", :birth_date => to_utc(2014,10,24),
     :kindled => 2, :survived => 2,
     :weights => [
       { :weight => 2.24, :count => 2, :date => to_utc(2014,11,10), :notes => "" }
@@ -53,9 +53,9 @@ litters.insert(
   }
 )
   
-litters.insert( {:litter_id => "44", :doe => "3BR", :buck => "C16", :birth_date => to_utc(2014,10,24), "kindled" => 3, "survived" => 0 } )
+litters.insert( {:id => "44", :doe => "3BR", :buck => "C16", :birth_date => to_utc(2014,10,24), "kindled" => 3, "survived" => 0 } )
 
-litters.insert ( {:litter_id => "45", :doe=>"C3", "buck"=>"C4",
+litters.insert ( {:id => "45", :doe=>"C3", "buck"=>"C4",
   "first_exposure"=>to_utc(2014,11,7), "last_exposure"=>to_utc(2014,11,9),
   "exposures" => [
     {:date => to_utc(2014,11,7), :notes=>"not interested"},
@@ -64,7 +64,7 @@ litters.insert ( {:litter_id => "45", :doe=>"C3", "buck"=>"C4",
     ] }
   )
 
-litters.insert({ :litter_id => "46", :doe=>"NZW8", :buck=>"C4",
+litters.insert({ :id => "46", :doe=>"NZW8", :buck=>"C4",
   "first_exposure"=>to_utc(2014,11,7), "last_exposure"=>to_utc(2014,11,8),
     "exposures" => [
       {"date" => to_utc(2014,11,7), :notes=>"success"},

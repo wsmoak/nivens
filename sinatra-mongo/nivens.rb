@@ -66,17 +66,17 @@ post '/exposure' do
   exposure = { :date => date, :notes => params["notes"] }
   puts date
   puts exposure
-  puts "updating..." + params["litter_id"]
-  litters.update( {:litter_id => params["litter_id"]}, { "$push" => {"exposures" =>  exposure } } )
-  litters.update( {:litter_id => params["litter_id"]}, { "$set" => { "last_exposure" => date } } )
-  redirect '/litter/'+params["litter_id"]
+  puts "updating..." + params["id"]
+  litters.update( {:id => params["id"]}, { "$push" => {"exposures" =>  exposure } } )
+  litters.update( {:id => params["id"]}, { "$set" => { "last_exposure" => date } } )
+  redirect '/litter/'+params["id"]
 end
 
 post '/weight' do
   date = Date.new(params[:year].to_i,params[:month].to_i,params[:day].to_i).to_time.utc
   weight = { :date => date, :weight => params[:weight].to_f, :count => params[:count], :notes => params[:notes] }
-  litters.update( {:litter_id => params[:litter_id]}, { "$push" => {:weights => weight } } )
-  redirect '/litter/'+params[:litter_id]
+  litters.update( {:id => params[:id]}, { "$push" => {:weights => weight } } )
+  redirect '/litter/'+params[:id]
 end
 
 get '/litter/new' do
@@ -87,26 +87,26 @@ post '/litter' do
   doc = {
          :doe => params["doe"], 
          :buck => params["buck"], 
-         :litter_id => params["litter_id"],
+         :id => params["id"],
          :date => Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc ,
          :kindled_count => params["size"],
          :notes => params["notes"] }
   litters.insert(doc)
-  redirect '/litter/'+params["litter_id"]
+  redirect '/litter/'+params["id"]
 end
 
 get '/litter/all' do
   response = '<h1>Litters</h1>'
   litters.find().each { |litter|
     response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
-    response += "<a href='/litter/" + litter["litter_id"] + "'>Edit</a>"
+    response += "<a href='/litter/" + litter["id"] + "'>Edit</a>"
   }
   response
 end
 
-get '/litter/:litter_id' do
+get '/litter/:id' do
   response = "<h1>Litter</h1>"
-  litter = litters.find_one( "litter_id" => params[:litter_id] )
+  litter = litters.find_one( "id" => params[:id] )
   response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
   response += erb(:exposure)
   response += erb(:weight)
@@ -173,7 +173,7 @@ __END__
   
 @@ exposure
     <form action="/exposure" method="post">
-      <input type="hidden" name="litter_id" value="<%= params['litter_id'] %>"/>
+      <input type="hidden" name="id" value="<%= params['id'] %>"/>
       Year: <input type="text" size="4" name="year"/>
       Month: <input type="text" size="2" name="month"/>
       Day: <input type="text" size="2" name="day"/>
@@ -185,13 +185,13 @@ __END__
     <form action="/litter" method="post">
       Doe's Ear ID: <input type="text" name="doe"/><br/>
       Buck's Ear ID: <input type="text" name="buck"><br/>
-      Litter Number: <input type="text" name="litter_id"/><br/>
+      Litter Number: <input type="text" name="id"/><br/>
       <button type="submit" name="Submit">Submit</button>
     </form>
 
 @@ weight
     <form action="/weight" method="post">
-      <input type="hidden" name="litter_id" value="<%= params['litter_id'] %>"/>
+      <input type="hidden" name="id" value="<%= params['id'] %>"/>
       Year: <input type="text" size="4" name="year"/>
       Month: <input type="text" size="2" name="month"/>
       Day: <input type="text" size="2" name="day"/>
