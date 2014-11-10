@@ -92,6 +92,7 @@ get '/litter/all' do
   response = '<h1>Litters</h1>'
   litters.find().each { |litter|
     response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
+    response += "<a href='/litter/" + litter["litter_id"] + "'>Edit</a>"
   }
   response
 end
