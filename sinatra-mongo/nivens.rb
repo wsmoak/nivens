@@ -43,6 +43,13 @@ get '/rabbit/:ear_id' do
   response
 end
 
+# http://www.sinatrarb.com/faq.html#multiroute
+["/rabbit", "/rabbits"].each do |path|
+  get path do
+    redirect '/rabbit/all'
+  end
+end
+
 post '/rabbit' do
   doc = { 
     :ear_id => params["ear_id"],
@@ -94,6 +101,13 @@ get '/litter/:litter_id' do
   litter = litters.find_one( "litter_id" => params[:litter_id] )
   response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
   response += erb(:exposure)
+end
+
+# http://www.sinatrarb.com/faq.html#multiroute
+["/litter", "/litters"].each do |path|
+  get path do
+    redirect '/litter/all'
+  end
 end
 
 def add_nestbox(the_date)
