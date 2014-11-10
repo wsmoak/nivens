@@ -40,29 +40,11 @@ rabbits.insert ( {:ear_id=>"3BL", :sex=>"F", :birth_date => to_utc(2014,03,04),
 rabbits.insert ( {:ear_id=>"3BR", :sex=>"F", :birth_date => to_utc(2014,03,04), 
   "parent_buck" => "C4", "parent_doe" => "C3"} )
 
-puts "Loading breedings..."
-breedings = db["breedings"] 
-breedings.remove 
-
-breedings.insert ({"doe"=>"C3", "buck"=>"C4", "first"=>to_utc(2014,11,7), "last"=>to_utc(2014,11,8),
-  "exposures" => [
-    {:date => to_utc(2014,11,7), :notes=>"not interested"},
-    {:date => to_utc(2014,11,8), :notes=>"success"},
-    {:date => to_utc(2014,11,9), :notes=>"not interested"}
-    ] }
-  )
-breedings.insert({"doe"=>"NZW8", "buck"=>"C4", "first"=>to_utc(2014,11,7), "last"=>to_utc(2014,11,8),
-    "exposures" => [
-      {"date" => to_utc(2014,11,7), :notes=>"success"},
-      {"date" =>to_utc(2014,11,8), :notes=>"very upset!"}
-    ] }
-  )
-    
 puts "Loading litters..."
 litters = db["litters"]
 litters.remove 
   
-litters.insert( {"litter_id" => "43", "doe" => "3BL", "buck" => "C16", :birth_date => to_utc(2014,10,24), 
+litters.insert( {"litter_id" => "43", :doe => "3BL", :buck => "C16", :birth_date => to_utc(2014,10,24),
   "kindled" => 2, "survived" => 2,
   "weights" => [
     {"weight" => 0.5, "count" => 2, "date" => to_utc(2014,10,29), :notes => "well fed"},
@@ -71,4 +53,21 @@ litters.insert( {"litter_id" => "43", "doe" => "3BL", "buck" => "C16", :birth_da
   "retained" => ["431","432"] }
   )
   
-litters.insert( {:litter_id => "44", "doe" => "3BR", "buck" => "C16", :birth_date => to_utc(2014,10,24), "kindled" => 3, "survived" => 0 } )
+litters.insert( {:litter_id => "44", :doe => "3BR", :buck => "C16", :birth_date => to_utc(2014,10,24), "kindled" => 3, "survived" => 0 } )
+
+litters.insert ( {:litter_id => "45", :doe=>"C3", "buck"=>"C4",
+  "first_exposure"=>to_utc(2014,11,7), "last_exposure"=>to_utc(2014,11,9),
+  "exposures" => [
+    {:date => to_utc(2014,11,7), :notes=>"not interested"},
+    {:date => to_utc(2014,11,8), :notes=>"success"},
+    {:date => to_utc(2014,11,9), :notes=>"not interested"}
+    ] }
+  )
+
+litters.insert({ :litter_id => "46", :doe=>"NZW8", :buck=>"C4",
+  "first_exposure"=>to_utc(2014,11,7), "last_exposure"=>to_utc(2014,11,8),
+    "exposures" => [
+      {"date" => to_utc(2014,11,7), :notes=>"success"},
+      {"date" =>to_utc(2014,11,8), :notes=>"very upset!"}
+    ] }
+  )

@@ -24,50 +24,49 @@ rabbits = db["rabbits"]
 litters = db["litters"]
 breedings = db["breedings"]
 
-get '/rabbit/:ear_id' do
-  response = '<h1>Rabbit</h1>'
-  rabbits.find_one("ear_id" => params[:ear_id]).each{ |item| 
-    response += "<p>" + item.inspect + "</p>" 
-  }
-  response
+get '/rabbit/new' do
+  erb :rabbit
 end
 
 get '/rabbit/all' do
   response = '<h1>Rabbits</h1>'
   rabbits.find().each { |rabbit|
-    response += '<p>' + rabbit.inspect + '</p>'
+    response += '<pre>' + JSON.pretty_generate(rabbit) + '</pre>'
   }
   response
 end
 
-get '/rabbit/new' do
-  erb :rabbit
+get '/rabbit/:ear_id' do
+  response = '<h1>Rabbit</h1>'
+  rabbit = rabbits.find_one( "ear_id" => params[:ear_id] )
+  response += "<pre>" + JSON.pretty_generate(rabbit) + "</pre>"
+  response
 end
 
 post '/rabbit' do
   doc = { 
-    :ear_id => params["ear_id"], 
+    :ear_id => params["ear_id"],
+    :name => params["name"],
     :sex => params["sex"], 
-    :birth_date => Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc }
+    :birth_date => Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc
+   }
   rabbits.insert(doc)
   redirect '/rabbit/'+params["ear_id"]
 end
 
-get '/breeding/new' do
-  erb :breeding
+post '/exposure' do
+  date = Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc
+  exposure = { :date => date, :notes => params["notes"] }
+  puts date
+  puts exposure
+  puts "updating..." + params["litter_id"]
+  litters.update( {:litter_id => params["litter_id"]}, { "$push" => {"exposures" =>  exposure } } )
+  litters.update( {:litter_id => params["litter_id"]}, { "$set" => { "last_exposure" => date } } )
+  redirect '/litter/'+params["litter_id"]
 end
 
-post '/breeding' do
-  date = Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc
-  doc = {
-         :doe => params["doe"], 
-         :buck => params["buck"], 
-         :first => date ,
-         :last => date ,
-         :exposures => [ {:date => date, :notes => params["notes"] } ]
-    }
-  breedings.insert(doc)
-  redirect '/breeding/all'
+get '/litter/new' do
+  erb :litter
 end
 
 post '/litter' do
@@ -79,29 +78,30 @@ post '/litter' do
          :kindled_count => params["size"],
          :notes => params["notes"] }
   litters.insert(doc)
-  redirect '/breeding/all'
-end
-
-#store latest breeding on the rabbit?
-get '/breeding/all' do
-  response = ''
-  breedings.find().each { |breeding| 
-    response += '<p>' + breeding.inspect + 
-    "<form action='/breeding/edit/"+ breeding["doe"] + "'><button type='submit'>Add Exposure</button></form></p>"
-  }
-  response
+  redirect '/litter/'+params["litter_id"]
 end
 
 get '/litter/all' do
-  response = ''
+  response = '<h1>Litters</h1>'
   litters.find().each { |litter|
-    response += "<p>" + litter.inspect + "</p>"
+    response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
   }
   response
+end
+
+get '/litter/:litter_id' do
+  response = "<h1>Litter</h1>"
+  litter = litters.find_one( "litter_id" => params[:litter_id] )
+  response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
+  response += erb(:exposure)
 end
 
 def add_nestbox(the_date)
   the_date + 60*60*24*27
+end
+
+def kits_due(the_date)
+  the_date + 60*60*24*31
 end
 
 def remove_nestbox(the_date)
@@ -111,19 +111,17 @@ end
 get '/schedule' do
   response = '<h1>Schedule</h1>'
   # db.coll.find({"exposures": {"$slice": -1}}) 
-  breedings.find().each { |breeding|
-    first_exposure = breeding["first"]
-    last_exposure = breeding["last"]
-    response = response + "<p>Doe "+breeding["doe"]+" bred " + first_exposure.strftime("%m/%d" ) +
-      " to " + last_exposure.strftime("%m/%d") +
+  litters.find(  "first_exposure" => {"$exists"=>"true"} ).each { |litter|
+    first_exposure = litter["first_exposure"]
+    last_exposure = litter["last_exposure"]
+    response += "<p>Doe " + litter["doe"] + " bred (to " + litter["buck"] + ") " +
+      first_exposure.strftime("%m/%d" ) +" to " + last_exposure.strftime("%m/%d") +
       ". Add nestbox on " + add_nestbox(first_exposure).strftime("%a %m/%d" ) +
+      ". Kits due " + kits_due(first_exposure).strftime("%a %m/%d" ) +
+      " to " + kits_due(last_exposure).strftime("%a %m/%d") +
       ". Remove nestbox on " + remove_nestbox(last_exposure).strftime("%a %m/%d") + ".</p>"
   }
   response
-end
-
-get '/litter/new' do
-  erb :litter
 end
 
 __END__
@@ -149,25 +147,20 @@ __END__
     <button type="submit" name="Submit">Submit</button>
   </form>
   
-@@ breeding
-    <form action="/breeding" method="post">
-      Doe's Ear ID: <input type="text" name="doe"/><br/>
-      Buck's Ear ID: <input type="text" name="buck"/><br/>
-      Year: <input type="text" name="year"/><br/>
-      Month: <input type="text" name="month"/><br/>
-      Day: <input type="text" name="day"/><br/>
-      Notes: <input type="text" name="notes"><br/>
-      <button type="submit" name="Submit">Submit</button>
+@@ exposure
+    <form action="/exposure" method="post">
+      <input type="hidden" name="litter_id" value="<%= params['litter_id'] %>"/>
+      Year: <input type="text" size="4" name="year"/>
+      Month: <input type="text" size="2" name="month"/>
+      Day: <input type="text" size="2" name="day"/>
+      Notes: <input type="text" size="15" name="notes">
+      <button type="submit" name="Submit">Add Exposure</button>
     </form>
 
 @@ litter
     <form action="/litter" method="post">
       Doe's Ear ID: <input type="text" name="doe"/><br/>
+      Buck's Ear ID: <input type="text" name="buck"><br/>
       Litter Number: <input type="text" name="litter_id"/><br/>
-      Number of kits born: <input type="text" name="size"/><br/>
-      Birth Year: <input type="text" name="year"/><br/>
-      Birth Month: <input type="text" name="month"/><br/>
-      Birth Day: <input type="text" name="day"/><br/>
-      Notes: <input type="text" name="notes"><br/>
       <button type="submit" name="Submit">Submit</button>
     </form>
