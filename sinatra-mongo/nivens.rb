@@ -36,9 +36,9 @@ get '/rabbit/all' do
   response
 end
 
-get '/rabbit/:ear_id' do
+get '/rabbit/:id' do
   response = '<h1>Rabbit</h1>'
-  rabbit = rabbits.find_one( "ear_id" => params[:ear_id] )
+  rabbit = rabbits.find_one( "id" => params[:id] )
   response += "<pre>" + JSON.pretty_generate(rabbit) + "</pre>"
   response
 end
@@ -52,13 +52,13 @@ end
 
 post '/rabbit' do
   doc = { 
-    :ear_id => params["ear_id"],
+    :id => params["id"],
     :name => params["name"],
     :sex => params["sex"], 
     :birth_date => Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc
    }
   rabbits.insert(doc)
-  redirect '/rabbit/'+params["ear_id"]
+  redirect '/rabbit/'+params["id"]
 end
 
 post '/exposure' do
@@ -161,7 +161,7 @@ __END__
   
 @@ rabbit
   <form action="/rabbit" method="post">
-    Ear ID: <input type="text" name="ear_id"/><br/>
+    ID: <input type="text" name="id"/><br/>
     Sex: <input type="text" name="sex"/><br/>
     Birth Year: <input type="text" name="year"/><br/>
     Birth Month: <input type="text" name="month"/><br/>
