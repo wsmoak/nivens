@@ -27,17 +27,17 @@ puts "Loading rabbits..."
 rabbits = db["rabbits"]
 rabbits.remove 
 
-rabbits.insert ( {:ear_id=>"C4", :sex=>"M", :birth_date => to_utc(2011,12,01), 
+rabbits.insert ( {:id=>"C4", :sex=>"M", :birth_date => to_utc(2011,12,01),
   :notes => "Acquired April 1 2012 from Ms. Schumaker, Inverness FL"} )
-rabbits.insert ( {:ear_id=>"C16", :sex=>"M", :birth_date => to_utc(2012,12,01), 
+rabbits.insert ( {:id=>"C16", :sex=>"M", :birth_date => to_utc(2012,12,01),
   :notes => "Acquired Feb 2013 from Ms. Schumaker, Inverness FL"} )
-rabbits.insert ( {:ear_id=>"C3", :sex=>"F", :birth_date =>  to_utc(2011,12,01), 
+rabbits.insert ( {:id=>"C3", :sex=>"F", :birth_date =>  to_utc(2011,12,01),
   :notes => "Acquired April 1 2012 from Ms. Schumaker, Inverness FL"} )
-rabbits.insert ( {:ear_id=>"NZW8", :sex=>"F", :birth_date => to_utc(2012,6,29), 
+rabbits.insert ( {:id=>"NZW8", :sex=>"F", :birth_date => to_utc(2012,6,29),
   :notes => "Acquired from Crossroads Rabbitry in AL"} )
-rabbits.insert ( {:ear_id=>"3BL", :sex=>"F", :birth_date => to_utc(2014,03,04), 
+rabbits.insert ( {:id=>"3BL", :sex=>"F", :birth_date => to_utc(2014,03,04),
   "parent_buck" => "C4", "parent_doe" => "C3"} )
-rabbits.insert ( {:ear_id=>"3BR", :sex=>"F", :birth_date => to_utc(2014,03,04), 
+rabbits.insert ( {:id=>"3BR", :sex=>"F", :birth_date => to_utc(2014,03,04),
   "parent_buck" => "C4", "parent_doe" => "C3"} )
 
 puts "Loading litters..."
