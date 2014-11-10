@@ -44,14 +44,14 @@ puts "Loading litters..."
 litters = db["litters"]
 litters.remove 
   
-litters.insert( {"litter_id" => "43", :doe => "3BL", :buck => "C16", :birth_date => to_utc(2014,10,24),
-  "kindled" => 2, "survived" => 2,
-  "weights" => [
-    {"weight" => 0.5, "count" => 2, "date" => to_utc(2014,10,29), :notes => "well fed"},
-	 {"weight" => 0.7, "count" => 2, "date" => to_utc(2014,10,31), :notes => "doing fine"}
-   ],
-  "retained" => ["431","432"] }
-  )
+litters.insert(
+  {:litter_id => "43", :doe => "3BL", :buck => "C16", :birth_date => to_utc(2014,10,24),
+    :kindled => 2, :survived => 2,
+    :weights => [
+      { :weight => 2.24, :count => 2, :date => to_utc(2014,11,10), :notes => "" }
+    ]
+  }
+)
   
 litters.insert( {:litter_id => "44", :doe => "3BR", :buck => "C16", :birth_date => to_utc(2014,10,24), "kindled" => 3, "survived" => 0 } )
 

@@ -72,6 +72,13 @@ post '/exposure' do
   redirect '/litter/'+params["litter_id"]
 end
 
+post '/weight' do
+  date = Date.new(params[:year].to_i,params[:month].to_i,params[:day].to_i).to_time.utc
+  weight = { :date => date, :weight => params[:weight].to_f, :count => params[:count], :notes => params[:notes] }
+  litters.update( {:litter_id => params[:litter_id]}, { "$push" => {:weights => weight } } )
+  redirect '/litter/'+params[:litter_id]
+end
+
 get '/litter/new' do
   erb :litter
 end
@@ -102,7 +109,9 @@ get '/litter/:litter_id' do
   litter = litters.find_one( "litter_id" => params[:litter_id] )
   response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
   response += erb(:exposure)
+  response += erb(:weight)
 end
+
 
 # http://www.sinatrarb.com/faq.html#multiroute
 ["/litter", "/litters"].each do |path|
@@ -178,4 +187,16 @@ __END__
       Buck's Ear ID: <input type="text" name="buck"><br/>
       Litter Number: <input type="text" name="litter_id"/><br/>
       <button type="submit" name="Submit">Submit</button>
+    </form>
+
+@@ weight
+    <form action="/weight" method="post">
+      <input type="hidden" name="litter_id" value="<%= params['litter_id'] %>"/>
+      Year: <input type="text" size="4" name="year"/>
+      Month: <input type="text" size="2" name="month"/>
+      Day: <input type="text" size="2" name="day"/>
+      Weight: <input type="text" size="5" name="weight"/>
+      Count: <input type="text" size="5" name="count"/>
+      Notes: <input type="text" size="15" name="notes">
+      <button type="submit" name="Submit">Add Weight</button>
     </form>
