@@ -13,3 +13,18 @@ Then visit:
 
 http://localhost:4000/rabbit/create
 
+To see a list of your rabbits, visit:
+
+http://localhost:4000/rabbit/all
+
+Once you have added a pair of rabbits, visit:
+
+http://localhost:4000/litter/create
+
+After you have created a litter, you can record when the doe was exposed to the buck.
+
+Once you have done this, visit:
+
+http://localhost:4567/schedule
+
+The schedule tells you when you should add a nestbox to the cage, and when to expect the doe to kindle.

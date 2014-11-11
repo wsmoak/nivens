@@ -102,24 +102,22 @@ end
 
 post '/weight' do
   date = Date.new(params[:year].to_i,params[:month].to_i,params[:day].to_i).to_time.utc
-  weight = { :date => date, :weight => params[:weight].to_f, :count => params[:count], :notes => params[:notes] }
+  weight = { :date => date, :weight => params[:weight].to_f, :count => params[:count].to_i, :notes => params[:notes] }
   litters.update( {:id => params[:id]}, { "$push" => {:weights => weight } } )
   redirect '/litter/'+params[:id]
 end
 
-get '/litter/new' do
-  erb :litter
+get '/litter/create' do
+  erb :litter_create
 end
 
 post '/litter' do
-  doc = {
-         :doe => params["doe"], 
-         :buck => params["buck"], 
-         :id => params["id"],
-         :date => Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc ,
-         :kindled_count => params["size"],
-         :notes => params["notes"] }
-  litters.insert(doc)
+  litters.insert( {
+         :id => params[:id],
+         :doe => params[:doe], 
+         :buck => params[:buck]
+        }
+    )
   redirect '/litter/'+params["id"]
 end
 
@@ -240,7 +238,8 @@ __END__
       <button type="submit" name="Submit">Add Exposure</button>
     </form>
 
-@@ litter
+@@ litter_create
+    <h1>New Litter</h1>
     <form action="/litter" method="post">
       Doe's Ear ID: <input type="text" name="doe"/><br/>
       Buck's Ear ID: <input type="text" name="buck"><br/>
