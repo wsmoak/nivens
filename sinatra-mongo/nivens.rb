@@ -24,14 +24,15 @@ rabbits = db["rabbits"]
 litters = db["litters"]
 breedings = db["breedings"]
 
-get '/rabbit/new' do
-  erb :rabbit
+get '/rabbit/create' do
+  erb :rabbit_create
 end
 
 get '/rabbit/all' do
   response = '<h1>Rabbits</h1>'
   rabbits.find().each { |rabbit|
     response += '<pre>' + JSON.pretty_generate(rabbit) + '</pre>'
+    response += "<a href='/rabbit/" + rabbit["id"] + "'>Edit</a>"
   }
   response
 end
@@ -40,6 +41,7 @@ get '/rabbit/:id' do
   response = '<h1>Rabbit</h1>'
   rabbit = rabbits.find_one( "id" => params[:id] )
   response += "<pre>" + JSON.pretty_generate(rabbit) + "</pre>"
+  response += erb(:rabbit_update)
   response
 end
 
@@ -59,6 +61,32 @@ post '/rabbit' do
    }
   rabbits.insert(doc)
   redirect '/rabbit/'+params["id"]
+end
+
+post '/rabbit/name/update' do
+  rabbits.update( {:id => params[:id]}, { "$set" => { :name => params[:name] } } )
+  redirect '/rabbit/'+params[:id]
+end
+
+post '/rabbit/sex/update' do
+  rabbits.update( {:id => params[:id]}, { "$set" => { :sex => params[:sex] } } )
+  redirect '/rabbit/'+params[:id]
+end
+
+post '/rabbit/birthdate/update' do
+  rabbits.update( {:id => params[:id]},
+  { "$set" => { :birth_date => Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc } } )
+  redirect '/rabbit/'+params[:id]
+end
+
+post '/rabbit/mother/update' do
+  rabbits.update( {:id => params[:id]}, { "$set" => { :parent_doe => params[:parent_doe] } } )
+  redirect '/rabbit/'+params[:id]
+end
+
+post '/rabbit/father/update' do
+  rabbits.update( {:id => params[:id]}, { "$set" => { :parent_buck => params[:parent_buck] } } )
+  redirect '/rabbit/'+params[:id]
 end
 
 post '/exposure' do
@@ -158,10 +186,12 @@ __END__
     <%= yield %>
   </body>
   </html>
-  
-@@ rabbit
+
+@@ rabbit_create
+  <h1>Rabbit</h1>
   <form action="/rabbit" method="post">
     ID: <input type="text" name="id"/><br/>
+    Name: <input type="text" name="name"/><br/>
     Sex: <input type="text" name="sex"/><br/>
     Birth Year: <input type="text" name="year"/><br/>
     Birth Month: <input type="text" name="month"/><br/>
@@ -169,6 +199,35 @@ __END__
     Parent Doe: <input type="text" name="parent_doe"><br/>
     Parent Buck: <input type="text" name="parent_buck"><br/>
     <button type="submit" name="Submit">Submit</button>
+  </form>
+
+@@ rabbit_update
+  <form action="/rabbit/name/update" method="post">
+    <input type="hidden" name="id" value="<%= params[:id] %>"/>
+    Name: <input type="text" name="name"/>
+    <button type="submit" name="Submit">Update</button>
+  </form>
+  <form action="/rabbit/sex/update" method="post">
+    <input type="hidden" name="id" value="<%= params[:id] %>"/>
+    Sex: <input type="text" name="sex"/>
+    <button type="submit" name="Submit">Update</button>
+  </form>
+  <form action="/rabbit/birthdate/update" method="post">
+    <input type="hidden" name="id" value="<%= params[:id] %>"/>
+    Birth Year: <input type="text" size="5" name="year"/>
+    Birth Month: <input type="text" size="3" name="month"/>
+    Birth Day: <input type="text" size="3" name="day"/>
+    <button type="submit" name="Submit">Update</button>
+  </form>
+  <form action="/rabbit/mother/update" method="post">
+    <input type="hidden" name="id" value="<%= params[:id] %>"/>
+    Parent Doe: <input type="text" name="parent_doe"/>
+    <button type="submit" name="Submit">Update</button>
+  </form>
+  <form action="/rabbit/father/update" method="post">
+    <input type="hidden" name="id" value="<%= params[:id] %>"/>
+    Parent Buck: <input type="text" name="parent_buck"/>
+    <button type="submit" name="Submit">Update</button>
   </form>
   
 @@ exposure

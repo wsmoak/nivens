@@ -11,4 +11,5 @@ $ ruby nivens.rb
 
 Then visit:
 
-http://localhost:4000/rabbit/new
+http://localhost:4000/rabbit/create
+
