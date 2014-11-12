@@ -22,7 +22,6 @@ db = Mongo::Connection.new.db("nivens")
 # collections
 rabbits = db["rabbits"]
 litters = db["litters"]
-breedings = db["breedings"]
 
 get '/rabbit/create' do
   erb :rabbit_create
