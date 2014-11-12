@@ -110,11 +110,12 @@ end
 post '/exposure' do
   date = Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc
   exposure = { :date => date, :notes => params["notes"] }
-  puts date
-  puts exposure
-  puts "updating..." + params["id"]
   litters.update( {:id => params["id"]}, { "$push" => {"exposures" =>  exposure } } )
   litters.update( {:id => params["id"]}, { "$set" => { "last_exposure" => date } } )
+  litter = litters.find_one( "id" => params[:id] )
+  if !litter["first_exposure"] then
+    litters.update( {:id => params["id"]}, { "$set" => { :first_exposure => date } } )
+  end
   redirect '/litter/edit/'+params["id"]
 end
 
@@ -221,6 +222,7 @@ get '/schedule' do
       " to " + kits_due(last_exposure).strftime("%a %m/%d") +
       ". Remove nestbox on " + remove_nestbox(last_exposure).strftime("%a %m/%d") + ".</p>"
   }
+  response += "<p><a href='/'>Home</a></p>"
   response
 end
 
