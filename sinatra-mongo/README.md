@@ -28,3 +28,9 @@ Once you have done this, visit:
 http://localhost:4567/schedule
 
 The schedule tells you when you should add a nestbox to the cage, and when to expect the doe to kindle.
+
+Possible Features
+
+- rabbit status page showing id, name, age, average weight of kits at X days (by doe for the buck), whether a doe is pregnant, etc.
+- print out cage cards
+- predict kindling date based on the doe's history
