@@ -23,6 +23,10 @@ db = Mongo::Connection.new.db("nivens")
 rabbits = db["rabbits"]
 litters = db["litters"]
 
+get '/' do
+  erb :index
+end
+
 get '/rabbit/create' do
   erb :rabbit_create
 end
@@ -34,6 +38,7 @@ get '/rabbit/all' do
     response += "<a href='/rabbit/" + rabbit["id"] + "'>Display</a> | "
     response += "<a href='/rabbit/edit/" + rabbit["id"] + "'>Edit</a>"
   }
+  response += "<p><a href='/'>Home</a></p>"
   response
 end
 
@@ -43,6 +48,7 @@ get '/rabbit/:id' do
   response += "<pre>" + JSON.pretty_generate(rabbit) + "</pre>"
   response += "<a href='/rabbit/edit/" + rabbit["id"] + "'>Edit</a> | "
   response += "<a href='/rabbit/all" + "'>List</a>"
+  response += "<p><a href='/'>Home</a></p>"
   response
 end
 
@@ -53,6 +59,7 @@ get '/rabbit/edit/:id' do
   response += erb(:rabbit_update)
   response += "<a href='/rabbit/" + rabbit["id"] + "'>Display</a> | "
   response += "<a href='/rabbit/all" + "'>List</a>"
+  response += "<p><a href='/'>Home</a></p>"
   response
 end
 
@@ -157,6 +164,7 @@ get '/litter/all' do
     response += "<a href='/litter/" + litter["id"] + "'>Display</a> | "
     response += "<a href='/litter/edit/" + litter["id"] + "'>Edit</a>"
   }
+  response += "<p><a href='/'>Home</a></p>"
   response
 end
 
@@ -169,6 +177,7 @@ get '/litter/edit/:id' do
   response += erb(:weight)
   response += "<a href='/litter/" + litter["id"] + "'>Display</a> | "
   response += "<a href='/litter/all" + "'>List</a>"
+  response += "<p><a href='/'>Home</a></p>"
 end
 
 get '/litter/:id' do
@@ -177,6 +186,7 @@ get '/litter/:id' do
   response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
   response += "<a href='/litter/edit/" + litter["id"] + "'>Edit</a> | "
   response += "<a href='/litter/all" + "'>List</a>"
+  response += "<p><a href='/'>Home</a></p>"
 end
 
 # http://www.sinatrarb.com/faq.html#multiroute
@@ -225,8 +235,16 @@ __END__
   </body>
   </html>
 
+@@ index
+  <h1>Nivens</h1>
+  <p><a href='/rabbit/create'>New Rabbit</a></p>
+  <p><a href='/litter/create'>New Litter</a></p>
+  <p><a href='/rabbit/all'>List Rabbits</a></p>
+  <p><a href='/litter/all'>List Litters</a></p>
+  <p><a href='/schedule'>View Schedule</a></p>
+
 @@ rabbit_create
-  <h1>Rabbit</h1>
+  <h1>New Rabbit</h1>
   <form action="/rabbit" method="post">
     ID: <input type="text" name="id"/><br/>
     Name: <input type="text" name="name"/><br/>
@@ -237,6 +255,7 @@ __END__
     Parent Doe: <input type="text" name="parent_doe"><br/>
     Parent Buck: <input type="text" name="parent_buck"><br/>
     <button type="submit" name="Submit">Submit</button>
+    <p><a href='/'>Home</a>
   </form>
 
 @@ rabbit_update
@@ -298,6 +317,7 @@ __END__
       Litter Number: <input type="text" name="id"/><br/>
       <button type="submit" name="Submit">Submit</button>
     </form>
+    <p><a href='/'>Home</a>
 
 @@ weight
     <form action="/weight" method="post">

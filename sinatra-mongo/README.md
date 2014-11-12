@@ -11,15 +11,9 @@ $ ruby nivens.rb
 
 Then visit:
 
-http://localhost:4000/rabbit/create
+http://localhost:4567/
 
-To see a list of your rabbits, visit:
-
-http://localhost:4000/rabbit/all
-
-Once you have added a pair of rabbits, visit:
-
-http://localhost:4000/litter/create
+Use the "New Rabbit" link to add a pair of rabbits, then return to the Home page and add a "New Litter".
 
 After you have created a litter, you can record when the doe was exposed to the buck.
 
