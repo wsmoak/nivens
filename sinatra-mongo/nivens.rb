@@ -121,6 +121,17 @@ post '/litter' do
   redirect '/litter/'+params["id"]
 end
 
+post '/litter/doe/update' do
+  litters.update( {:id => params[:id]}, { "$set" => { :doe => params[:doe] } } )
+  redirect '/litter/'+params[:id]
+end
+
+post '/litter/buck/update' do
+  litters.update( {:id => params[:id]}, { "$set" => { :buck => params[:buck] } } )
+  redirect '/litter/'+params[:id]
+end
+
+
 get '/litter/all' do
   response = '<h1>Litters</h1>'
   litters.find().each { |litter|
@@ -134,6 +145,7 @@ get '/litter/:id' do
   response = "<h1>Litter</h1>"
   litter = litters.find_one( "id" => params[:id] )
   response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
+  response += erb(:litter_update)
   response += erb(:exposure)
   response += erb(:weight)
 end
@@ -228,6 +240,18 @@ __END__
     <button type="submit" name="Submit">Update</button>
   </form>
   
+@@ litter_update
+  <form action="/litter/doe/update" method="post">
+    <input type="hidden" name="id" value="<%= params[:id] %>"/>
+    Doe: <input type="text" name="doe"/>
+    <button type="submit" name="Submit">Update</button>
+  </form>
+  <form action="/litter/buck/update" method="post">
+    <input type="hidden" name="id" value="<%= params[:id] %>"/>
+    Buck: <input type="text" name="buck"/>
+    <button type="submit" name="Submit">Update</button>
+  </form>
+
 @@ exposure
     <form action="/exposure" method="post">
       <input type="hidden" name="id" value="<%= params['id'] %>"/>
