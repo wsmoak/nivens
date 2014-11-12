@@ -32,7 +32,8 @@ get '/rabbit/all' do
   response = '<h1>Rabbits</h1>'
   rabbits.find().each { |rabbit|
     response += '<pre>' + JSON.pretty_generate(rabbit) + '</pre>'
-    response += "<a href='/rabbit/" + rabbit["id"] + "'>Edit</a>"
+    response += "<a href='/rabbit/" + rabbit["id"] + "'>Display</a> | "
+    response += "<a href='/rabbit/edit/" + rabbit["id"] + "'>Edit</a>"
   }
   response
 end
@@ -41,7 +42,18 @@ get '/rabbit/:id' do
   response = '<h1>Rabbit</h1>'
   rabbit = rabbits.find_one( "id" => params[:id] )
   response += "<pre>" + JSON.pretty_generate(rabbit) + "</pre>"
+  response += "<a href='/rabbit/edit/" + rabbit["id"] + "'>Edit</a> | "
+  response += "<a href='/rabbit/all" + "'>List</a>"
+  response
+end
+
+get '/rabbit/edit/:id' do
+  response = '<h1>Rabbit</h1>'
+  rabbit = rabbits.find_one( "id" => params[:id] )
+  response += "<pre>" + JSON.pretty_generate(rabbit) + "</pre>"
   response += erb(:rabbit_update)
+  response += "<a href='/rabbit/" + rabbit["id"] + "'>Display</a> | "
+  response += "<a href='/rabbit/all" + "'>List</a>"
   response
 end
 
@@ -97,7 +109,7 @@ post '/exposure' do
   puts "updating..." + params["id"]
   litters.update( {:id => params["id"]}, { "$push" => {"exposures" =>  exposure } } )
   litters.update( {:id => params["id"]}, { "$set" => { "last_exposure" => date } } )
-  redirect '/litter/'+params["id"]
+  redirect '/litter/edit/'+params["id"]
 end
 
 post '/weight' do
@@ -111,7 +123,7 @@ post '/weight' do
   else
     litters.update( {:id => params[:id] }, { "$push" => { :weights => { :date => date, :data => [ data ] } } } )
   end
-  redirect '/litter/'+params[:id]
+  redirect '/litter/edit/'+params[:id]
 end
 
 get '/litter/create' do
@@ -125,17 +137,17 @@ post '/litter' do
          :buck => params[:buck]
         }
     )
-  redirect '/litter/'+params["id"]
+  redirect '/litter/edit/'+params["id"]
 end
 
 post '/litter/doe/update' do
   litters.update( {:id => params[:id]}, { "$set" => { :doe => params[:doe] } } )
-  redirect '/litter/'+params[:id]
+  redirect '/litter/edit/'+params[:id]
 end
 
 post '/litter/buck/update' do
   litters.update( {:id => params[:id]}, { "$set" => { :buck => params[:buck] } } )
-  redirect '/litter/'+params[:id]
+  redirect '/litter/edit/'+params[:id]
 end
 
 
@@ -143,20 +155,30 @@ get '/litter/all' do
   response = '<h1>Litters</h1>'
   litters.find().each { |litter|
     response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
-    response += "<a href='/litter/" + litter["id"] + "'>Edit</a>"
+    response += "<a href='/litter/" + litter["id"] + "'>Display</a> | "
+    response += "<a href='/litter/edit/" + litter["id"] + "'>Edit</a>"
   }
   response
 end
 
-get '/litter/:id' do
+get '/litter/edit/:id' do
   response = "<h1>Litter</h1>"
   litter = litters.find_one( "id" => params[:id] )
   response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
   response += erb(:litter_update)
   response += erb(:exposure)
   response += erb(:weight)
+  response += "<a href='/litter/" + litter["id"] + "'>Display</a> | "
+  response += "<a href='/litter/all" + "'>List</a>"
 end
 
+get '/litter/:id' do
+  response = "<h1>Litter</h1>"
+  litter = litters.find_one( "id" => params[:id] )
+  response += "<pre>" + JSON.pretty_generate(litter) + "</pre>"
+  response += "<a href='/litter/edit/" + litter["id"] + "'>Edit</a> | "
+  response += "<a href='/litter/all" + "'>List</a>"
+end
 
 # http://www.sinatrarb.com/faq.html#multiroute
 ["/litter", "/litters"].each do |path|
