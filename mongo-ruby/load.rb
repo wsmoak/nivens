@@ -48,7 +48,12 @@ litters.insert(
   {:id => "43", :doe => "3BL", :buck => "C16", :birth_date => to_utc(2014,10,24),
     :kindled => 2, :survived => 2,
     :weights => [
-      { :weight => 2.24, :count => 2, :date => to_utc(2014,11,10), :notes => "" }
+      { :date => to_utc(2014,11,10),
+        :data => [
+          { :weight => 1.14, :count => 1, :id => "", :notes => "" },
+          { :weight => 1.10, :count => 1, :id => "", :notes => "" }
+        ]
+      }
     ]
   }
 )

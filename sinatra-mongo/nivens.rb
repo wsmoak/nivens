@@ -102,8 +102,15 @@ end
 
 post '/weight' do
   date = Date.new(params[:year].to_i,params[:month].to_i,params[:day].to_i).to_time.utc
-  weight = { :date => date, :weight => params[:weight].to_f, :count => params[:count].to_i, :notes => params[:notes] }
-  litters.update( {:id => params[:id]}, { "$push" => {:weights => weight } } )
+  rabbit_id = params[:rabbit]
+  count = rabbit_id.empty? ? params[:count].to_i : 1
+  data = { :weight => params[:weight].to_f, :count => count, :id => rabbit_id, :notes => params[:notes] }
+  if litters.find_one({:id => params[:id], "weights.date" => date  } ) then
+    # see http://docs.mongodb.org/manual/reference/operator/update/positional/#update-documents-in-an-array
+    litters.update( {:id => params[:id], "weights.date" => date  }, { "$push" =>  { "weights.$.data" => data } } )
+  else
+    litters.update( {:id => params[:id] }, { "$push" => { :weights => { :date => date, :data => [ data ] } } } )
+  end
   redirect '/litter/'+params[:id]
 end
 
@@ -278,7 +285,8 @@ __END__
       Month: <input type="text" size="2" name="month"/>
       Day: <input type="text" size="2" name="day"/>
       Weight: <input type="text" size="5" name="weight"/>
-      Count: <input type="text" size="5" name="count"/>
+      (Count: <input type="text" size="5" name="count"/> or
+      ID: <input type="text" size="5" name="rabbit"/>)
       Notes: <input type="text" size="15" name="notes">
       <button type="submit" name="Submit">Add Weight</button>
     </form>
