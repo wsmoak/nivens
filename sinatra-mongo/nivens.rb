@@ -21,6 +21,7 @@ require 'uri'
 # see https://devcenter.heroku.com/articles/mongohq#adding-a-compose-database
 def get_connection
   return @db_connection if @db_connection
+  puts ENV['MONGOHQ_URL']
   db = URI.parse(ENV['MONGOHQ_URL'])
   db_name = db.path.gsub(/^\//, '')
   @db_connection = Mongo::Connection.new(db.host, db.port).db(db_name)
