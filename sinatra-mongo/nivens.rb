@@ -157,6 +157,15 @@ post '/litter/buck/update' do
   redirect '/litter/edit/'+params[:id]
 end
 
+post '/litter/kindled/update' do
+  litters.update( {:id => params[:id]}, { "$set" => { :kindled => params[:kindled].to_i } } )
+  redirect '/litter/edit/'+params[:id]
+end
+
+post '/litter/survived/update' do
+  litters.update( {:id => params[:id]}, { "$set" => { :survived => params[:survived].to_i } } )
+  redirect '/litter/edit/'+params[:id]
+end
 
 get '/litter/all' do
   response = '<h1>Litters</h1>'
@@ -292,19 +301,29 @@ __END__
 @@ litter_update
   <form action="/litter/doe/update" method="post">
     <input type="hidden" name="id" value="<%= params[:id] %>"/>
-    Doe: <input type="text" name="doe"/>
+    Doe: <input type="text" size="5" name="doe"/>
     <button type="submit" name="Submit">Update</button>
   </form>
   <form action="/litter/buck/update" method="post">
     <input type="hidden" name="id" value="<%= params[:id] %>"/>
-    Buck: <input type="text" name="buck"/>
+    Buck: <input type="text" size="5" name="buck"/>
+    <button type="submit" name="Submit">Update</button>
+  </form>
+  <form action="/litter/kindled/update" method="post">
+    <input type="hidden" name="id" value="<%= params[:id] %>"/>
+    Number Kindled: <input size="5" type="text" name="kindled"/>
+    <button type="submit" name="Submit">Update</button>
+  </form>
+  <form action="/litter/survived/update" method="post">
+    <input type="hidden" name="id" value="<%= params[:id] %>"/>
+    Number Survived: <input type="text" size="5" name="survived"/>
     <button type="submit" name="Submit">Update</button>
   </form>
 
 @@ exposure
     <form action="/exposure" method="post">
       <input type="hidden" name="id" value="<%= params['id'] %>"/>
-      Year: <input type="text" size="4" name="year"/>
+      Exposure Year: <input type="text" size="4" name="year"/>
       Month: <input type="text" size="2" name="month"/>
       Day: <input type="text" size="2" name="day"/>
       Notes: <input type="text" size="15" name="notes">
@@ -324,7 +343,7 @@ __END__
 @@ weight
     <form action="/weight" method="post">
       <input type="hidden" name="id" value="<%= params['id'] %>"/>
-      Year: <input type="text" size="4" name="year"/>
+      Weight Year: <input type="text" size="4" name="year"/>
       Month: <input type="text" size="2" name="month"/>
       Day: <input type="text" size="2" name="day"/>
       Weight: <input type="text" size="5" name="weight"/>
