@@ -285,6 +285,13 @@ get '/transaction/:_id' do
   response += "<p><a href='/'>Home</a></p>"
 end
 
+# http://www.sinatrarb.com/faq.html#multiroute
+["/transaction/?", "/transactions"].each do |path|
+  get path do
+    redirect '/transaction/all'
+  end
+end
+
 get '/schedule' do
   response = '<h1>Schedule</h1>'
   # db.coll.find({"exposures": {"$slice": -1}}) 
