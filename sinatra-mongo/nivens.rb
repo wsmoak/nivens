@@ -34,6 +34,7 @@ db = get_connection
 # collections
 rabbits = db["rabbits"]
 litters = db["litters"]
+txns    = db["transactions"]
 
 get '/' do
   erb :index
@@ -230,6 +231,60 @@ def remove_nestbox(the_date)
   the_date + 60*60*24*35
 end
 
+get '/transaction/create' do
+  erb :txn_create
+end
+
+post '/transaction' do
+  txns.insert( {
+         :date => Date.new(params["year"].to_i,params["month"].to_i,params["day"].to_i).to_time.utc,
+         :amount => params[:amount].to_f,
+         :type => params[:type],
+         :description => params[:description]
+        }
+    )
+  redirect '/transaction/all'
+end
+
+post '/transaction/delete' do
+  txns.remove( { "_id" => BSON::ObjectId( params[:_id] ) } )
+  redirect '/transaction/all'
+end
+
+get '/transaction/all' do
+  response = '<h1>Transactions</h1>'
+  txns.find().each { |txn|
+    response += "<pre>" + JSON.pretty_generate(txn) + "</pre>"
+
+    response += "<a href='/transaction/" + txn['_id'].to_s + "'>Display</a> | "
+    response += "<a href='/transaction/edit/" + txn['_id'].to_s + "'>Edit</a>"
+  }
+  response += "<p><a href='/'>Home</a></p>"
+  response
+end
+
+get '/transaction/edit/:_id' do
+  response = "<h1>Transaction</h1>"
+  txn = txns.find_one( "_id" => BSON::ObjectId( params[:_id] ) )
+  response += "<pre>" + JSON.pretty_generate(txn) + "</pre>"
+  response += "<form action='/transaction/delete' method='post'>"
+  response += "<input type='hidden' name='_id' value='" + txn['_id'].to_s + "'/>"
+  response += "<button type='submit'>Delete</button></form>"
+  response += "<a href='/transaction/" + txn['_id'].to_s + "'>Display</a> | "
+  response += "<a href='/transaction/all'>List</a>"
+  response += "<p><a href='/'>Home</a></p>"
+  response
+end
+
+get '/transaction/:_id' do
+  response = "<h1>Transaction</h1>"
+  txn = txns.find_one( "_id" => BSON::ObjectId( params[:_id] ) )
+  response += "<pre>" + JSON.pretty_generate(txn) + "</pre>"
+  response += "<a href='/transaction/edit/" + txn['_id'].to_s + "'>Edit</a> | "
+  response += "<a href='/transaction/all'>List</a>"
+  response += "<p><a href='/'>Home</a></p>"
+end
+
 get '/schedule' do
   response = '<h1>Schedule</h1>'
   # db.coll.find({"exposures": {"$slice": -1}}) 
@@ -262,8 +317,10 @@ __END__
   <h1>Nivens</h1>
   <p><a href='/rabbit/create'>New Rabbit</a></p>
   <p><a href='/litter/create'>New Litter</a></p>
+  <p><a href='/transaction/create'>New Transaction</a>
   <p><a href='/rabbit/all'>List Rabbits</a></p>
   <p><a href='/litter/all'>List Litters</a></p>
+  <p><a href='/transaction/all'>List Transactions</a></p>
   <p><a href='/schedule'>View Schedule</a></p>
 
 @@ rabbit_create
@@ -364,3 +421,16 @@ __END__
       Notes: <input type="text" size="15" name="notes">
       <button type="submit" name="Submit">Add Weight</button>
     </form>
+
+@@txn_create
+    <h1>New Transaction</h1>
+    <form action="/transaction" method="post">
+      Year: <input type="text" size="4" name="year"/>
+      Month: <input type="text" size="2" name="month"/>
+      Day: <input type="text" size="2" name="day"/><br/>
+      Amount: <input type="text" name="amount"><br/>
+      Type: <input type="text" name="type"/><br/>
+      Description: <input type="text" name="description"/><br/>
+      <button type="submit" name="Submit">Submit</button>
+    </form>
+    <p><a href='/'>Home</a>
