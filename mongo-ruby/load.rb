@@ -76,3 +76,11 @@ litters.insert({ :id => "46", :doe=>"NZW8", :buck=>"C4",
       {"date" =>to_utc(2014,11,8), :notes=>"very upset!"}
     ] }
   )
+
+puts "Loading transactions..."
+txns = db["transactions"]
+txns.remove
+
+# Store transactions as type=income or expense. Normally expense is negative, income is positive.  
+# Refunds are negative income.  returns are negative expenses.
+txns.insert( { :date => to_utc(2014,11,11), :amount => -53.25, :type: => "expense", :tags => ["feed"], :description => "3 x 50lbs" } )
