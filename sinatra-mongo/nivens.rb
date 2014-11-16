@@ -320,16 +320,6 @@ __END__
   </body>
   </html>
 
-@@ index
-  <h1>Nivens</h1>
-  <p><a href='/rabbit/create'>New Rabbit</a></p>
-  <p><a href='/litter/create'>New Litter</a></p>
-  <p><a href='/transaction/create'>New Transaction</a>
-  <p><a href='/rabbit/all'>List Rabbits</a></p>
-  <p><a href='/litter/all'>List Litters</a></p>
-  <p><a href='/transaction/all'>List Transactions</a></p>
-  <p><a href='/schedule'>View Schedule</a></p>
-
 @@ rabbit_create
   <h1>New Rabbit</h1>
   <form action="/rabbit" method="post">
