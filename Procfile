@@ -1,1 +1,1 @@
-web: bundle exec ruby sinatra-mongo/nivens.rb -p $PORT
+web: bundle exec ruby angular-sinatra/nivens.rb -p $PORT

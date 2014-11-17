@@ -1,0 +1,39 @@
+<html ng-app="nivensApp">
+<head>
+  <title>Nivens</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+  <script src="app.js"></script>
+</head>
+<body ng-controller="MainCtrl as ctrl">
+      
+  <tabs>
+    <tab title="Home">
+      <h1>Nivens</h1>
+    </tab>
+    <tab title="Rabbits">
+      <h2>Rabbits</h2>
+      <p ng-repeat="rabbit in ctrl.rabbits" class="item">
+        ID:  <span ng-bind="rabbit.id"></span> (<span ng-bind="rabbit._id.$oid"></span>)<br/>
+        Name: <span ng-bind="rabbit.name"></span><br/>
+        Sex: <span ng-bind="rabbit.sex"></span><br/>
+        Birth Date: <span ng-bind="rabbit.birth_date"></span><br/>
+        Parents: <span ng-bind="rabbit.parent_doe"></span> & <span ng-bind="rabbit.parent_buck"></span><br/>
+        Notes: <span ng-bind="rabbit.notes"></span><br/>
+      </p>
+    </tab>
+    <tab title="New Rabbit">
+       <h2>New Rabbit</h2>
+       <form name="rabbitForm" ng-submit="ctrl.add()">
+         ID: <input type="text" ng-model="ctrl.rabbit.id" required/><br/>
+         Name: <input type="text" ng-model="ctrl.rabbit.name"/><br/>
+         Sex: <input type="text" ng-model="ctrl.rabbit.sex" required/><br/>
+         Birth Date: <input type="date" datepicker ng-model="ctrl.rabbit.birth_date"/><br/>
+         Parent Doe: <input type="text" ng-model="ctrl.rabbit.parent_doe"/><br/>
+         Parent Buck: <input type="text" ng-model="ctrl.rabbit.parent_buck"/><br/>
+         <input type="submit" value="Submit" ng-disabled="rabbitForm.$invalid"/>
+      </form>
+    </tab>
+  </tabs>
+
+</body>
+</html>
