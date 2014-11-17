@@ -44,7 +44,9 @@ end
 
 post '/api/rabbit' do
   content_type 'application/json'
-  puts "api/rabbit called with post and " + params.inspect
-  new_id = rabbits.insert params
+  # see http://www.sinatrarb.com/intro.html#Accessing%20the%20Request%20Object
+  request.body.rewind  # in case someone already read it
+  data = JSON.parse request.body.read
+  new_id = rabbits.insert data
   rabbits.find_one( :_id => new_id ).to_json
 end

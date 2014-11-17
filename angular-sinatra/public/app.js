@@ -1,8 +1,6 @@
   angular.module('nivensApp',[])
     .controller('MainCtrl', ['$http', function($http) {
       
-      console.log('MainCtrl has been created');
-      
       var self = this;
       
       self.rabbits = [];
@@ -22,7 +20,6 @@
       fetchRabbits();
       
       self.add = function() {
-        console.log('Submitted with', self.rabbit);
         $http.post('/api/rabbit', self.rabbit)
           .then(fetchRabbits)
           .then( function(response) {
