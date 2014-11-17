@@ -26,7 +26,7 @@
         $http.post('/api/rabbit', self.rabbit)
           .then(fetchRabbits)
           .then( function(response) {
-            self.rabbit = {"id": "done"};
+            self.rabbit = {};
           });
       };
       
