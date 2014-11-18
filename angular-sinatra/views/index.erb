@@ -15,7 +15,7 @@
       <p ng-repeat="rabbit in ctrl.rabbits">
         <!--<span ng-bind="rabbit._id.$oid"></span>-->
         ID:  <span ng-bind="rabbit.id"></span><br/>
-        Name: <span ng-bind="rabbit.name"></span><br/>
+        <span ng-show="rabbit.name">Name: <span ng-bind="rabbit.name"></span><br/></span>
         Sex: <span ng-bind="rabbit.sex"></span><br/>
         Birth Date: <span ng-bind="rabbit.birth_date"></span><br/>
         Parents: <span ng-bind="rabbit.parent_doe"></span> & <span ng-bind="rabbit.parent_buck"></span><br/>
