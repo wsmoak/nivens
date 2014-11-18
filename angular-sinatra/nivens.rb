@@ -17,6 +17,7 @@ require 'mongo'
 require 'json/ext'
 require 'thin'
 require 'uri'
+require 'stripe'
 
 # see https://devcenter.heroku.com/articles/mongohq#adding-a-compose-database
 def get_connection
@@ -49,4 +50,36 @@ post '/api/rabbit' do
   data = JSON.parse request.body.read
   new_id = rabbits.insert data
   rabbits.find_one( :_id => new_id ).to_json
+end
+
+post '/rabbit/purchase' do
+  content_type 'application/json'
+
+  request.body.rewind
+  data = JSON.parse request.body.read
+  puts data
+
+  begin
+
+    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+
+    customer = Stripe::Customer.create(
+      :email => 'example@stripe.com',
+      :card  => data["id"]
+    )
+
+    charge = Stripe::Charge.create(
+      :customer    => customer.id,
+      :amount      => 3500,
+      :description => 'Nivens customer',
+      :currency    => 'usd'
+    )
+
+  rescue Stripe::CardError => e
+    puts e
+  end
+
+  puts "returning " + charge.inspect
+  charge.to_json
+
 end

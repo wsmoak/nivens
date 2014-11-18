@@ -5,6 +5,7 @@
       
       self.rabbits = [];
       self.rabbit = {};
+      self.card = {};
       self.currentTab = 'home';
       
       var fetchRabbits = function() {
@@ -28,5 +29,34 @@
             self.currentTab = 'rabbits';
           });
       };
+
+      self.purchase = function() {
+        console.log( "purchase");
+        Stripe.setPublishableKey('pk_test_4ZzD3dUkMiTnVLpwymISz9Uf');
+        Stripe.card.createToken({
+          number: self.card.number,
+          cvc: self.card.cvc,
+          exp_month: self.card.exp_month,
+          exp_year: self.card.exp_year
+        }, self.stripeResponseHandler);
+      };
       
+      self.stripeResponseHandler = function(status, response) {
+        console.log( "stripe response handler");
+        console.log( status );
+        console.log( response );
+
+        if (status == 200 ) {
+          $http.post('/rabbit/purchase', response )
+          .then( function(response) {
+            console.log("after post to purchase");
+            console.log(response);
+            self.card = {};
+          });
+        } else {
+          console.log( "problem with tokenizing");
+        }
+
+      }
+
     }]);
