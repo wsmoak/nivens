@@ -5,6 +5,7 @@
       
       self.rabbits = [];
       self.rabbit = {};
+      self.currentTab = 'home';
       
       var fetchRabbits = function() {
         return $http.get('/api/rabbit').then(
@@ -24,6 +25,7 @@
           .then(fetchRabbits)
           .then( function(response) {
             self.rabbit = {};
+            self.currentTab = 'rabbits';
           });
       };
       
