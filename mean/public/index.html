@@ -1,0 +1,54 @@
+<html ng-app="nivensApp">
+<head>
+  <title>Nivens</title>
+  <script src="https://code.angularjs.org/1.3.3/angular.js"></script>
+  <script src="app.js"></script>
+</head>
+<body>
+
+  <h1>Nivens</h1>
+
+  <div ng-controller="MainCtrl as ctrl">
+    <button ng-click="ctrl.currentTab = 'home'">Home</button>
+    <button ng-click="ctrl.currentTab = 'rabbits'">Rabbits</button>
+    <button ng-click="ctrl.currentTab = 'new_rabbit'">New Rabbit</button>
+    
+    <div ng-switch="ctrl.currentTab">
+      <div ng-switch-when="home">
+        <h2>Home</h2>
+        <h3>Click one of the buttons above to view your rabbits or add a new one.</h3>
+      </div>
+
+      <div ng-switch-when="rabbits">
+        <h2>Rabbits</h2>
+        <p ng-repeat="rabbit in ctrl.rabbits">
+        <!--<span ng-bind="rabbit._id.$oid"></span>-->
+        ID:  <span ng-bind="rabbit.id"></span><br/>
+        <span ng-show="rabbit.name">Name: <span ng-bind="rabbit.name"></span><br/></span>
+        Sex: <span ng-bind="rabbit.sex"></span><br/>
+        Birth Date: <span ng-bind="rabbit.birth_date"></span><br/>
+        Parents: <span ng-bind="rabbit.parent_doe"></span> & <span ng-bind="rabbit.parent_buck"></span><br/>
+        Notes: <span ng-bind="rabbit.notes"></span><br/>
+        </p>
+      </div>
+      
+      <div ng-switch-when="new_rabbit">
+         <h2>New Rabbit</h2>
+         <form name="rabbitForm" ng-submit="ctrl.add()">
+           ID: <input type="text" ng-model="ctrl.rabbit.id" required/><br/>
+           Name: <input type="text" ng-model="ctrl.rabbit.name"/><br/>
+           Sex: <input type="text" ng-model="ctrl.rabbit.sex" required/><br/>
+           Birth Date: <input type="date" datepicker ng-model="ctrl.rabbit.birth_date"/><br/>
+           Parent Doe: <input type="text" ng-model="ctrl.rabbit.parent_doe"/><br/>
+           Parent Buck: <input type="text" ng-model="ctrl.rabbit.parent_buck"/><br/>
+           Notes: <input type="text" ng-model="ctrl.rabbit.notes"><br/>
+           <input type="submit" value="Submit" ng-disabled="rabbitForm.$invalid"/>
+        </form>
+      </div>
+      
+
+    </div>
+  </div>
+
+</body>
+</html>
