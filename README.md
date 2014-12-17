@@ -9,4 +9,4 @@ There is also initial work done in Node.js + Angular aka the MEAN stack.
 
 Future plans may include
 
-Ruby + Rails
+Ruby and Rails
