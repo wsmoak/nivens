@@ -84,6 +84,23 @@ litters.insert({ :id => "46", :doe=>"NZW8", :buck=>"C4",
     ] }
   )
 
+litters.insert({ :id => "47", :doe=>"3BL", :buck=>"C16",
+    "first_exposure"=>to_utc(2014,12,27), "last_exposure"=>to_utc(2014,12,29),
+      "exposures" => [
+        {"date" => to_utc(2014,12,27), :notes=>"success"},
+        {"date" =>to_utc(2014,12,29), :notes=>"very upset!"}
+      ] }
+    )
+
+litters.insert({ :id => "48", :doe=>"3BR", :buck=>"C16",
+  "first_exposure"=>to_utc(2014,12,28), "last_exposure"=>to_utc(2014,12,29),
+    "exposures" => [
+      {"date" => to_utc(2014,12,28), :notes=>"success"},
+      {"date" =>to_utc(2014,12,29), :notes=>"very upset!"}
+    ] }
+  )
+
+
 puts "Loading transactions..."
 txns = db["transactions"]
 txns.remove
